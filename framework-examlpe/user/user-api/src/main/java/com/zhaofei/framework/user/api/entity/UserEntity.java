@@ -5,13 +5,6 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 
- * 
- * @author 
- * @email 
- * @date 2020-08-10 17:52:35
- */
 @Data
 public class UserEntity implements Serializable {
 	private static final long serialVersionUID = 1L;

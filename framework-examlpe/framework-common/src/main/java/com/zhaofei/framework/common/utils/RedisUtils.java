@@ -1,4 +1,4 @@
-package com.zhaofei.framework.admin.utils;
+package com.zhaofei.framework.article.service.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
