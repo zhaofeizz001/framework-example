@@ -6,18 +6,19 @@
  * 版权所有，侵权必究！
  */
 
-package com.zhaofei.framework.user.service;
+package com.zhaofei.framework.article.service;
 
 import org.apache.dubbo.config.spring.context.annotation.DubboComponentScan;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
 @DubboComponentScan
 @SpringBootApplication
-public class UserApplication {
+@ComponentScan(basePackages = {"com.zhaofei.framework"})
+public class ArticleApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(UserApplication.class, args);
+		SpringApplication.run(ArticleApplication.class, args);
 	}
 }

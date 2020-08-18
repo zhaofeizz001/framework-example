@@ -7,7 +7,7 @@ function login(){
         "code": $("input[name='code']").val()
     }
     $.ajax({
-        url:"/user/login",
+        url:"/user/login?t=" + new Date().getTime(),
         type:"POST",
         dataType:"json",
         async:false,
@@ -16,7 +16,7 @@ function login(){
         success:function(data){
             if(data.header.retCode == "0"){
                 setCookie("token", data.body.token, data.body.expTime)
-                window.location.href = "/index";
+                window.location.href = "/view/index";
             }
 
         },

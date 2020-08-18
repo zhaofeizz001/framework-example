@@ -1,7 +1,7 @@
-package com.zhaofei.framework.common.aop;
+package com.zhaofei.framework.common.aop.dao;
 
 import com.zhaofei.framework.common.aop.util.AopCacheUtils;
-import com.zhaofei.framework.common.base.entity.BaseBean;
+import com.zhaofei.framework.common.base.entity.PageResponseBean;
 import com.zhaofei.framework.common.constant.CommonRedisKey;
 import com.zhaofei.framework.common.utils.JsonUtils;
 import com.zhaofei.framework.common.utils.RedisUtils;
@@ -12,6 +12,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
+import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -49,7 +50,9 @@ public class SelectCacheAspect {
             System.out.println("调用数据库数据");
             Object o =  pjp.proceed();
             String redisVal;
-            if(o instanceof Collection || o instanceof Map || o instanceof BaseBean){
+            if(o instanceof Collection
+                    || o instanceof Map
+                    || o instanceof PageResponseBean){
                 redisVal = JsonUtils.objtoJson(o);
             }else {
                 redisVal = o.toString();
@@ -88,8 +91,16 @@ public class SelectCacheAspect {
                 return jsonToMap(redisVal);
             }
 
-        } else {
-            return getObject(redisVal, (Class) genericReturnType);
+        }else {
+            try {
+                return getObject(redisVal, (Class) genericReturnType);
+            } catch (Exception e) {
+                Class<?> rawType = ((ParameterizedTypeImpl) genericReturnType).getRawType();
+                return getObject(redisVal, rawType);
+//                ParameterizedType parameterizedType = (ParameterizedType) genericReturnType;
+//                genericReturnType = parameterizedType.getActualTypeArguments()[0];
+//                return null;
+            }
         }
     }
 
@@ -125,4 +136,5 @@ public class SelectCacheAspect {
         }
         return JsonUtils.jsonToBean(o.toString(), tClass);
     }
+
 }

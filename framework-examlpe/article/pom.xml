@@ -9,7 +9,11 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
+    <packaging>pom</packaging>
+    <modules>
+        <module>article-api</module>
+        <module>article-service</module>
+    </modules>
     <artifactId>article</artifactId>
 
 

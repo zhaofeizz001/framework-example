@@ -1,5 +1,6 @@
-package com.zhaofei.framework.common.base.entity;
+package com.zhaofei.framework.user.api.entity;
 
+import com.zhaofei.framework.common.base.entity.BaseBean;
 import lombok.Data;
 import org.springframework.beans.BeanUtils;
 

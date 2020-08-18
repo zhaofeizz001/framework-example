@@ -11,5 +11,11 @@
 
     <artifactId>article-api</artifactId>
 
-
+    <dependencies>
+        <dependency>
+            <groupId>com.zhaofei.framework</groupId>
+            <artifactId>framework-common</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 </project>

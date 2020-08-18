@@ -1,16 +1,20 @@
 package com.zhaofei.framework.common.utils;
 
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
+import com.zhaofei.framework.common.base.entity.PageResponseBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.*;
 
 
 public class JsonUtils {
@@ -146,6 +150,26 @@ public class JsonUtils {
 		}
 	}
 
+	public static <E> PageResponseBean<E> jsonToGenericBean(String jsonString, TypeReference<PageResponseBean<E>> tr) {
+
+		if (jsonString == null || "".equals(jsonString)) {
+			return null;
+
+		} else {
+
+			// Jackson方式将Json转换为对象
+			MappingJsonFactory f = new MappingJsonFactory();
+			try {
+				JsonParser parser = f.createParser(jsonString);
+				return parser.readValueAs(tr);
+
+			} catch (Exception e) {
+				log.error(e.getMessage(), e);
+				return null;
+			}
+		}
+	}
+
 	/**
 	 * 数组格式JSON串转换为ObjectList对象
 	 *
@@ -156,7 +180,7 @@ public class JsonUtils {
 	 *            TypeReference,例如: new TypeReference< List<Album> >(){}
 	 * @return ObjectList对象
 	 */
-	public static <E> List<E> jsonToGenericBean(String jsonString, TypeReference<List<E>> tr) {
+	public static <E> List<E> jsonToGenericList(String jsonString, TypeReference<List<E>> tr) {
 
 		if (jsonString == null || "".equals(jsonString)) {
 			return null;
@@ -263,5 +287,57 @@ public class JsonUtils {
 			}
 			return null;
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <K, V>  Map<K, V> jsonToMap(String jsonString, Class<K> key, Class<V> value) {
+		Map mapObj = jsonToGenericMap(jsonString, new TypeReference<Map<K, V>>(){});
+		Map<K, V> map = new HashMap<>();
+		mapObj.forEach((k,v) -> {
+			if(v.getClass().isAssignableFrom(LinkedHashMap.class)){
+				try {
+					map.put((K) k, JsonUtils.jsonToBean(JsonUtils.objtoJson(v), value));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+
+
+		return map;
+	}
+
+	//Map转Object
+	public static <K, V> Object mapToObject(Map<K, V> map, Class<?> beanClass) throws Exception {
+		if (map == null)
+			return null;
+		Object obj = beanClass.newInstance();
+		Field[] fields = obj.getClass().getDeclaredFields();
+		for (Field field : fields) {
+			int mod = field.getModifiers();
+			if (Modifier.isStatic(mod) || Modifier.isFinal(mod)) {
+				continue;
+			}
+			field.setAccessible(true);
+			if (map.containsKey(field.getName())) {
+				field.set(obj, map.get(field.getName()));
+			}
+		}
+		return obj;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static Map jsonToMap(String jsonString) {
+		Map mapObj = JSONObject.parseObject(jsonString, Map.class);
+		return mapObj;
+	}
+
+	/**
+	 * json 转 List<T>
+	 */
+	public static <T> List<T> jsonToList(String jsonString, Class<T> clazz) {
+		@SuppressWarnings("unchecked")
+		List<T> ts = (List<T>) JSONArray.parseArray(jsonString, clazz);
+		return ts;
 	}
 }

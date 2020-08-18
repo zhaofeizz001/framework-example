@@ -15,8 +15,8 @@ import java.sql.SQLException;
 
 @Configuration
 @ConfigurationProperties(prefix = "spring.datasource.druid")
-@MapperScan(basePackages = ShopDataReadConfig.PACKAGE, sqlSessionFactoryRef = "sqlSessionFactory")
-public class ShopDataReadConfig {
+@MapperScan(basePackages = DataBaseConfig.PACKAGE, sqlSessionFactoryRef = "sqlSessionFactory")
+public class DataBaseConfig {
 
     /**
      * dao层的包路径
@@ -93,7 +93,7 @@ public class ShopDataReadConfig {
         sessionFactory.setConfigLocation(
             new PathMatchingResourcePatternResolver().getResource("classpath:mybatis-config.xml"));
         sessionFactory.setMapperLocations(new PathMatchingResourcePatternResolver()
-            .getResources(ShopDataReadConfig.MAPPER_LOCATION));
+            .getResources(DataBaseConfig.MAPPER_LOCATION));
 
         return sessionFactory.getObject();
     }

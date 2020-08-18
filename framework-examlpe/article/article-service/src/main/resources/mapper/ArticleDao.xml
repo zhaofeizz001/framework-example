@@ -1,20 +1,99 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.zhaofei.framework.user.service.dao.UserDao">
-    <resultMap id="userResult" type="com.zhaofei.framework.user.service.entity.UserEntity">
+<mapper namespace="com.zhaofei.framework.article.service.dao.ArticleDao">
+    <resultMap id="userResult" type="com.zhaofei.framework.article.service.entity.ArticleEntity">
         <result property="id" column="id" />
-        <result property="username" column="username" />
-        <result property="password" column="password" />
-        <result property="salt" column="salt" />
-        <result property="avatarAddress" column="avatar_address" />
-        <result property="loginTime" column="login_time" />
-        <result property="lastLoginTime" column="last_login_time" />
-        <result property="createTime" column="create_time" />
+        <result property="title" column="title" />
+        <result property="contentId" column="content_id" />
+        <result property="sort" column="sort" />
+        <result property="label" column="label" />
         <result property="state" column="state" />
+        <result property="visitsNumber" column="visits_number" />
+        <result property="createTime" column="create_time" />
+        <result property="updateTime" column="update_time" />
     </resultMap>
 
-    <select id="selectByName" resultType="com.zhaofei.framework.user.service.entity.UserEntity" parameterType="String">
-        select * from user where username = #{username}
+    <!-- 查询字段 -->
+    <sql id="sql_field">
+
+         id,
+         title,
+         content_id,
+         sort,
+         (select label_name from label where `id` = label) as label,
+         `state`,
+         visits_number,
+         create_time,
+         update_time
+    </sql>
+
+    <select id="getList" resultType="map" resultMap="userResult">
+        select
+        <include refid="sql_field" />
+        from article
     </select>
+
+
+    <insert id="insertArticleEntity"  useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into `article`(
+            `title`,
+            `content_id`,
+            `sort`,
+            `label`,
+            `state`,
+            `visits_number`,
+            `create_time`,
+            `update_time`
+        )
+        values(
+            #{title},
+            #{contentId},
+            #{sort},
+            #{label},
+            #{state},
+            #{visitsNumber},
+            now(),
+            now()
+        )
+	</insert>
+
+    <select id="selectOneArticleById" resultType="com.zhaofei.framework.article.service.entity.ArticleEntity">
+        select
+        <include refid="sql_field" />
+        from article
+        <include refid="whereConditions"/>
+    </select>
+
+    <sql id="whereConditions">
+        <where>
+            <if test="id != null and '' != id">
+                and `id`= #{id}
+            </if>
+            <if test="contentId != null and '' != contentId">
+                and `content_id`= #{contentId}
+            </if>
+            <if test="title != null and '' != title">
+                and `title`= #{title}
+            </if>
+            <if test="sort != null and '' != sort">
+                and `sort`= #{sort}
+            </if>
+            <if test="label != null and '' != label">
+                and `label`= #{label}
+            </if>
+            <if test="state != null and '' != state">
+                and `state`= #{state}
+            </if>
+            <if test="visitsNumber != null and '' != visitsNumber">
+                and `visits_number`= #{visitsNumber}
+            </if>
+            <if test="createTime != null and '' != createTime">
+                and `create_time`= #{createTime}
+            </if>
+            <if test="updateTime != null and '' != updateTime">
+                and `update_time`= #{updateTime}
+            </if>
+        </where>
+    </sql>
 </mapper>

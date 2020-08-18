@@ -1,21 +1,21 @@
 package com.zhaofei.framework.article.api.utils;
 
-public enum ArticleSortUtils {
+public enum ArticleSort {
     ARTICLE(0, "文章"),
     UNKNOWN(1, "未知");
 
-    ArticleSortUtils(int code, String name) {
+    ArticleSort(int code, String name) {
         this.code = code;
         this.name = name;
     }
 
-    public String getName(int code){
-        for(ArticleSortUtils f : ArticleSortUtils.values()){
+    public static String getName(int code){
+        for(ArticleSort f : ArticleSort.values()){
             if(f.getCode() == code){
                 return f.name;
             }
         }
-        return "";
+        return UNKNOWN.name;
     }
 
     private int code;

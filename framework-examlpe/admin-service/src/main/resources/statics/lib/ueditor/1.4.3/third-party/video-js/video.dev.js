@@ -799,7 +799,7 @@ vjs.guid = 1;
 /**
  * Unique attribute name to store an element's guid in
  * @type {String}
- * @constant
+ * @com.zhaofei.framework.common.constant
  * @private
  */
 vjs.expando = 'vdata' + (new Date()).getTime();
@@ -911,7 +911,7 @@ vjs.removeClass = function(element, classToRemove){
 /**
  * Element for testing browser HTML5 video capabilities
  * @type {Element}
- * @constant
+ * @com.zhaofei.framework.common.constant
  * @private
  */
 vjs.TEST_VID = vjs.createEl('video');
@@ -919,7 +919,7 @@ vjs.TEST_VID = vjs.createEl('video');
 /**
  * Useragent for browser testing.
  * @type {String}
- * @constant
+ * @com.zhaofei.framework.common.constant
  * @private
  */
 vjs.USER_AGENT = navigator.userAgent;
@@ -927,7 +927,7 @@ vjs.USER_AGENT = navigator.userAgent;
 /**
  * Device is an iPhone
  * @type {Boolean}
- * @constant
+ * @com.zhaofei.framework.common.constant
  * @private
  */
 vjs.IS_IPHONE = (/iPhone/i).test(vjs.USER_AGENT);

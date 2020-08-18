@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.zhaofei.framework.user.service.dao.UserDao">
-    <resultMap id="userResult" type="com.zhaofei.framework.user.service.entity.UserEntity">
+    <resultMap id="userResult" type="com.zhaofei.framework.user.api.entity.UserEntity">
         <result property="id" column="id" />
         <result property="username" column="username" />
         <result property="password" column="password" />
@@ -14,7 +14,7 @@
         <result property="state" column="state" />
     </resultMap>
 
-    <select id="selectByName" resultType="com.zhaofei.framework.user.service.entity.UserEntity" parameterType="String">
+    <select id="selectByName" resultType="com.zhaofei.framework.user.api.entity.UserEntity" parameterType="String">
         select * from user where username = #{username}
     </select>
 </mapper>

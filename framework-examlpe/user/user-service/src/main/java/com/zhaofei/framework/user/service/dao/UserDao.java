@@ -1,7 +1,7 @@
 package com.zhaofei.framework.user.service.dao;
 
 
-import com.zhaofei.framework.user.service.entity.UserEntity;
+import com.zhaofei.framework.user.api.entity.UserEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 

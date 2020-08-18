@@ -1,7 +1,7 @@
 package com.zhaofei.framework.admin.filter;
 
-import com.zhaofei.framework.admin.utils.RedisUtils;
-import com.zhaofei.framework.common.utils.CookieUtils;
+import com.zhaofei.framework.admin.utils.FilterResponseUtils;
+import com.zhaofei.framework.common.utils.RedisUtils;
 import com.zhaofei.framework.user.api.constant.UserRedisKey;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -9,30 +9,24 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class ViewInterceptor implements HandlerInterceptor {
-    long start = System.currentTimeMillis();
+import static com.zhaofei.framework.admin.constant.ResponseCode.USER_NOT_LOGIN;
 
-    private final static  String LOGIN_URL = "/view/login";
+public class MethodLoginInterceptor implements HandlerInterceptor {
 
     private final static String TOKEN = "token";
 
 
-
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
-        String cookieValue = CookieUtils.getCookieValue(httpServletRequest, TOKEN);
-
+        String cookieValue = httpServletRequest.getHeader(TOKEN);
         if(StringUtils.isEmpty(cookieValue)){
-            httpServletResponse.sendRedirect(LOGIN_URL);
+            return FilterResponseUtils.notLoginResponse(httpServletResponse, USER_NOT_LOGIN);
         } else {
             boolean exists = RedisUtils.exists(UserRedisKey.USER_TOKEN_KEY.getKey(cookieValue));
             if(!exists){
-                CookieUtils.deleteCookie(httpServletRequest, httpServletResponse, TOKEN);
-                httpServletResponse.sendRedirect(LOGIN_URL);
+               return FilterResponseUtils.notLoginResponse(httpServletResponse, USER_NOT_LOGIN);
             }
-
         }
-
         return true;
     }
 

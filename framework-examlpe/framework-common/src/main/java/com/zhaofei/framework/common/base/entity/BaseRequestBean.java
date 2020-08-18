@@ -1,2 +1,5 @@
-package com.zhaofei.framework.common.base.entity;public class BaseRequseBean {
+package com.zhaofei.framework.common.base.entity;
+
+public class BaseRequestBean{
+
 }

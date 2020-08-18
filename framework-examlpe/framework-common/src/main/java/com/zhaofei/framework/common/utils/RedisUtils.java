@@ -1,9 +1,10 @@
-package com.zhaofei.framework.article.service.utils;
+package com.zhaofei.framework.common.utils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.zhaofei.framework.common.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.BoundHashOperations;
@@ -18,7 +19,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-@Component
+@Configuration
+@ConditionalOnProperty(prefix = "spring.redis", name = "host")
 public class RedisUtils {
 
     @Autowired

@@ -1,18 +1,17 @@
-package com.zhaofei.framework.user.service.dao;
+package com.zhaofei.framework.article.service.dao;
 
 
-import com.zhaofei.framework.user.service.entity.UserEntity;
+import com.zhaofei.framework.article.service.entity.ArticleEntity;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 
-/**
- * 
- * 
- * @author 
- * @email 
- * @date 2020-08-10 17:52:35
- */
+import java.util.List;
+
 @Mapper
-public interface UserDao {
-    UserEntity selectByName(@Param("username")String username);
+public interface ArticleDao {
+
+    List<ArticleEntity> getList();
+
+    int insertArticleEntity(ArticleEntity articleEntity);
+
+    ArticleEntity selectOneArticleById(ArticleEntity articleEntity);
 }

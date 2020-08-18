@@ -1,16 +1,15 @@
 package com.zhaofei.framework.admin.utils;
 
+import com.zhaofei.framework.admin.constant.ResponseCode;
+import com.zhaofei.framework.user.api.entity.UserData;
 import com.zhaofei.framework.common.utils.JsonUtils;
 import com.zhaofei.framework.common.utils.RedisUtils;
 import com.zhaofei.framework.user.api.constant.UserRedisKey;
-import com.zhaofei.framework.common.base.entity.UserData;
 import com.zhaofei.framework.user.api.exception.UserException;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-
-import static com.zhaofei.framework.admin.constant.ResponseCode.USER_INFO_EXCEPTION;
 
 public class UserTokenUtils {
 
@@ -27,7 +26,7 @@ public class UserTokenUtils {
             }
             return userData;
         } catch (Exception e) {
-            throw new UserException(USER_INFO_EXCEPTION);
+            throw new UserException(ResponseCode.USER_INFO_EXCEPTION);
         }
     }
 }
