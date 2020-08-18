@@ -1,12 +1,13 @@
-package com.zhaofei.framework.article.service.entity;
+package com.zhaofei.framework.article.api.entity;
 
+import com.zhaofei.framework.common.base.entity.BaseBean;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class ArticleEntity implements Serializable {
+public class ArticleEntity extends BaseBean implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -26,9 +27,9 @@ public class ArticleEntity implements Serializable {
      */
     private Integer sort;
     /**
-     * 文章标签 --> 标签表id
+     * 文章标签
      */
-    private Integer label;
+    private String label;
     /**
      * state
      */
@@ -47,5 +48,6 @@ public class ArticleEntity implements Serializable {
      */
     private Date updateTime;
 
-
 }
+
+

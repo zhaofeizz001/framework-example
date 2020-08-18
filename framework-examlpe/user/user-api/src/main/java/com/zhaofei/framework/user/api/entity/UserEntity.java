@@ -1,12 +1,13 @@
-package com.zhaofei.framework.user.service.entity;
+package com.zhaofei.framework.user.api.entity;
 
+import com.zhaofei.framework.common.base.entity.BaseBean;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class UserEntity implements Serializable {
+public class Entity extends BaseBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	/**

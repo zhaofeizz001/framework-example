@@ -1,12 +1,12 @@
 package com.zhaofei.framework.common.aop;
 
-import com.zhaofei.framework.common.base.entity.BaseUserBean;
+import com.zhaofei.framework.common.aop.util.AopCacheUtils;
+import com.zhaofei.framework.common.base.entity.BaseBean;
 import com.zhaofei.framework.common.constant.CommonRedisKey;
 import com.zhaofei.framework.common.utils.JsonUtils;
 import com.zhaofei.framework.common.utils.RedisUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -16,14 +16,16 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
 
 import static com.zhaofei.framework.common.utils.JsonUtils.jsonToList;
 import static com.zhaofei.framework.common.utils.JsonUtils.jsonToMap;
 
 @Aspect
 @Component
-public class CacheAspect {
+public class SelectCacheAspect {
 
 
     @Pointcut("execution(public * com.zhaofei.framework.*.service.service.impl..*.select*(..))")
@@ -33,50 +35,27 @@ public class CacheAspect {
 
     @Around("controllerMethod()")
     public Object aroundMethod(ProceedingJoinPoint pjp) throws Exception {
-        Signature sig = pjp.getSignature();
-        MethodSignature msig = null;
-        if (!(sig instanceof MethodSignature)) {
-            throw new IllegalArgumentException();
-        }
-        msig = (MethodSignature) sig;
-        Object target = pjp.getTarget();
-        Method currentMethod = target.getClass().getMethod(msig.getName(), msig.getParameterTypes());
+        MethodSignature methodSignature = AopCacheUtils.getMethodSignature(pjp);
+        Method currentMethod = AopCacheUtils.getCurrentMethod(pjp, methodSignature);
+        String redisCacheKey = AopCacheUtils.getRedisCacheKey(pjp);
 
-        String[] s = msig.getMethod().toGenericString().split(" ");
-        String methodAddr = s[s.length - 1];
-
-        BaseUserBean userBean = null;
-        for (int i = 0; i < pjp.getArgs().length; i++){
-            Object arg = pjp.getArgs()[i];
-            if(arg instanceof BaseUserBean){
-                userBean = (BaseUserBean) arg;
-                break;
-            }
-        }
-
-        String redisKeyCache = CommonRedisKey.getCommonMethodCacheByDesc(methodAddr)
-                .getKey(userBean.getUsername(), methodAddr).replaceAll(" ", "");
-        String redisKey = redisKeyCache.substring(0, redisKeyCache.indexOf("("));
-        int x = redisKey.lastIndexOf(".");
-        char[] redisKeyChar = redisKey.toCharArray();
-        redisKeyChar[x] = ':';
-        redisKey = String.valueOf(redisKeyChar);
-        redisKey += redisKeyCache.substring(redisKeyCache.indexOf("("));
-
-        String result = RedisUtils.get(redisKey);
+        String result = RedisUtils.get(redisCacheKey);
         if(StringUtils.isNotEmpty(result)){
+            System.out.println("读取缓存信息");
             return returnRedisVal(result, currentMethod);
         }
 
         try {
+            System.out.println("调用数据库数据");
             Object o =  pjp.proceed();
             String redisVal;
-            if(o instanceof Collection || o instanceof Map || o instanceof BaseUserBean){
+            if(o instanceof Collection || o instanceof Map || o instanceof BaseBean){
                 redisVal = JsonUtils.objtoJson(o);
             }else {
                 redisVal = o.toString();
             }
-            RedisUtils.set(redisKey, redisVal, CommonRedisKey.getCommonMethodCacheByDesc(methodAddr).getExpTime());
+            String methodAddr = AopCacheUtils.getMethodAddr(pjp);
+            RedisUtils.set(redisCacheKey, redisVal, CommonRedisKey.getCommonMethodCacheByDesc(methodAddr).getExpTime());
             return o;
         } catch (Throwable e) {
             e.printStackTrace();
@@ -85,16 +64,17 @@ public class CacheAspect {
     }
 
 
-    private static Object returnRedisVal(String redisVal, Method currentMethod){
+    private static Object returnRedisVal(String redisVal, Method currentMethod) throws Exception{
         Type genericReturnType = currentMethod.getGenericReturnType();
-        Type[] type = ((ParameterizedType) genericReturnType).getActualTypeArguments();
         if(currentMethod.getReturnType().getSimpleName().equals("List")){
+            Type[] type = ((ParameterizedType) genericReturnType).getActualTypeArguments();
             if(genericReturnType instanceof ParameterizedType && type.length == 1){
                 return jsonToList(redisVal, (Class) type[0]);
             } else {
                 return jsonToList(redisVal, Object.class);
             }
         } else if(currentMethod.getReturnType().getSimpleName().equals("Set")){
+            Type[] type = ((ParameterizedType) genericReturnType).getActualTypeArguments();
             if(genericReturnType instanceof ParameterizedType && type.length == 1){
                 return new HashSet<>(jsonToList(redisVal, (Class) type[0]));
             } else {
@@ -102,6 +82,7 @@ public class CacheAspect {
             }
         } else if(currentMethod.getReturnType().getSimpleName().equals("Map")){
             if(genericReturnType instanceof ParameterizedType){
+                Type[] type = ((ParameterizedType) genericReturnType).getActualTypeArguments();
                 return jsonToMap(redisVal, (Class) type[0], (Class) type[1]);
             } else {
                 return jsonToMap(redisVal);
@@ -114,7 +95,7 @@ public class CacheAspect {
 
 
     @SuppressWarnings("unchecked")
-    private static  <T> Object getObject(Object o, Class<T> tClass){
+    private static  <T> Object getObject(Object o, Class<T> tClass) throws Exception{
         if(tClass.isAssignableFrom(String.class)){
             return o.toString();
         }
@@ -142,6 +123,6 @@ public class CacheAspect {
         if(tClass.isAssignableFrom(Boolean.class)){
             return Boolean.parseBoolean(o.toString());
         }
-        return (T) o;
+        return JsonUtils.jsonToBean(o.toString(), tClass);
     }
 }
