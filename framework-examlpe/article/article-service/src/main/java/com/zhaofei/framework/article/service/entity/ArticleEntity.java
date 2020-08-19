@@ -28,7 +28,7 @@ public class ArticleEntity implements Serializable {
     /**
      * 文章标签
      */
-    private String label;
+    private Integer label;
     /**
      * state
      */

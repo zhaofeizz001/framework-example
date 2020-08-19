@@ -8,12 +8,17 @@ import com.zhaofei.framework.article.api.service.ArticleService;
 import com.zhaofei.framework.article.service.dao.ArticleDao;
 import com.zhaofei.framework.common.base.entity.PageRequestBean;
 import com.zhaofei.framework.common.base.entity.PageResponseBean;
+import com.zhaofei.framework.common.utils.RedisUtils;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.zhaofei.framework.article.api.constant.ArticleConstant.LABEL_TYPE;
+import static com.zhaofei.framework.common.constant.DictRedisKey.DICT_KEY;
+import static com.zhaofei.framework.common.constant.DictRedisKey.DICT_TYPE;
 
 @DubboService
 public class ArticleServiceImpl implements ArticleService {
@@ -29,9 +34,13 @@ public class ArticleServiceImpl implements ArticleService {
         page.getResult().forEach(bean -> {
             ArticleData articleData = new ArticleData();
             BeanUtils.copyProperties(bean, articleData);
+            articleData.setLabel(RedisUtils.getMapField(
+                            DICT_TYPE.getKey(LABEL_TYPE.getType().toString()),
+                            DICT_KEY.getKey(bean.getLabel().toString()),
+                            String.class
+            ));
             list.add(articleData);
         });
-
 
 
         return new PageResponseBean<>(pageRequestBean,page.getTotal(), list);

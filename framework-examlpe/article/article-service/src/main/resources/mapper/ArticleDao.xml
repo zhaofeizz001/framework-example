@@ -21,7 +21,7 @@
          title,
          content_id,
          sort,
-         (select label_name from label where `id` = label) as label,
+         label,
          `state`,
          visits_number,
          create_time,
