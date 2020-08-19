@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zhaofei.framework.article.service.dao.DictDao">
+    <resultMap id="dictResult" type="com.zhaofei.framework.article.service.entity.DictEntity">
+        <result property="id" column="id" />
+        <result property="type" column="type" />
+        <result property="key" column="key" />
+        <result property="value" column="value" />
+    </resultMap>
+
+    <!-- 查询字段 -->
+    <sql id="sql_field">
+         id,
+         `type`,
+         `key`,
+         `value`
+    </sql>
+
+    <select id="getList" resultType="map" resultMap="dictResult">
+        select
+        <include refid="sql_field" />
+        from dict
+    </select>
+
+</mapper>
