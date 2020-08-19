@@ -2,7 +2,7 @@ package com.zhaofei.framework.common.constant;
 
 public enum CommonRedisKey {
 
-    COMMON_METHOD_CACHE("common:method:cache:%s:%s", 60 * 60 * 60 * 24 * 30L, "方法级缓存")
+    COMMON_METHOD_CACHE("common:method:cache:%s:%s", 30L, "方法级缓存")
     ,SELECT_ONE_ARTICLE_BY_ID(10L, "common:method:cache:admin:com.zhaofei.framework.article.service.service.impl.ArticleServiceImpl:selectOneById(com.zhaofei.framework.article.api.entity.ArticleData)")
 //    ,X1(6000L, "test")
 //    ,X2("test2")
