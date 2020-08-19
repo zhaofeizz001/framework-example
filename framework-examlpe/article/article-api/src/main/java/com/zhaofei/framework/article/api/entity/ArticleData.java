@@ -15,6 +15,10 @@ public class ArticleData extends BaseBean {
         super.setUsername(username);
     }
 
+    public ArticleData(Object o, String username) {
+        super.setUsername(username);
+    }
+
     /**
      * 主键
      */

@@ -33,7 +33,6 @@ public class ArticleController extends AbstractController {
     @PostMapping("/getList")
     public RestResult<List<ArticleListResponseBean>> getArticleList(){
         ArticleData articleEntity = new ArticleData(UserTokenUtils.getUserInfo().getUsername());
-//        UserTokenUtils.getUserInfo().getUsername();
         PageResponseBean<ArticleData> pageResponseBean =
                 articleService.selectList(new PageRequestBean<>(articleEntity));
         List<ArticleListResponseBean> result = new ArrayList<>(pageResponseBean.getSize());
