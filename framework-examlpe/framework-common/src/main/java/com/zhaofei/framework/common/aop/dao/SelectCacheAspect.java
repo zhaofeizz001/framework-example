@@ -24,6 +24,10 @@ import java.util.Map;
 import static com.zhaofei.framework.common.utils.JsonUtils.jsonToList;
 import static com.zhaofei.framework.common.utils.JsonUtils.jsonToMap;
 
+
+/**
+ * 查询缓存 当然也可以使用dubbo filter来实现，更为方便
+ */
 @Aspect
 @Component
 public class SelectCacheAspect {
@@ -97,9 +101,6 @@ public class SelectCacheAspect {
             } catch (Exception e) {
                 Class<?> rawType = ((ParameterizedTypeImpl) genericReturnType).getRawType();
                 return getObject(redisVal, rawType);
-//                ParameterizedType parameterizedType = (ParameterizedType) genericReturnType;
-//                genericReturnType = parameterizedType.getActualTypeArguments()[0];
-//                return null;
             }
         }
     }

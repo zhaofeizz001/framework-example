@@ -17,11 +17,13 @@ import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.Set;
 
+
+/**
+ * 更新缓存 当然也可以使用dubbo filter来实现，更为方便
+ */
 @Aspect
 @Component
 public class ResetCacheAspect {
-
-    private static final String SERVICE_IMPL = "ServiceImpl";
 
     private static final String SELECT_ONE_KEY = "%s:selectOneById%s";
     private static final String SELECT_LIST_KEY = "%s:selectList%s";
