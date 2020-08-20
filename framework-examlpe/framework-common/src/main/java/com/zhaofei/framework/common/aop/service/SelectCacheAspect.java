@@ -1,4 +1,4 @@
-package com.zhaofei.framework.common.aop.dao;
+package com.zhaofei.framework.common.aop.service;
 
 import com.zhaofei.framework.common.aop.util.AopCacheUtils;
 import com.zhaofei.framework.common.base.entity.BaseBean;
