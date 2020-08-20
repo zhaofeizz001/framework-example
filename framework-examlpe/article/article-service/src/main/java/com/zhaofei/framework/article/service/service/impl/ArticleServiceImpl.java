@@ -3,6 +3,8 @@ package com.zhaofei.framework.article.service.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.zhaofei.framework.article.api.entity.ArticleData;
+import com.zhaofei.framework.article.api.utils.ArticleSort;
+import com.zhaofei.framework.article.api.utils.ArticleState;
 import com.zhaofei.framework.article.service.dao.ArticleContentDao;
 import com.zhaofei.framework.article.service.entity.ArticleContentEntity;
 import com.zhaofei.framework.article.service.entity.ArticleEntity;
@@ -17,6 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +35,8 @@ public class ArticleServiceImpl implements ArticleService {
     @Autowired
     private ArticleContentDao articleContentDao;
 
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     @Override
     public PageResponseBean<ArticleData> selectList(PageRequestBean<ArticleData> pageRequestBean) {
         PageHelper.startPage(pageRequestBean.getPageNum(), pageRequestBean.getPageSize());
@@ -45,6 +50,10 @@ public class ArticleServiceImpl implements ArticleService {
                             DICT_KEY.getKey(bean.getLabel().toString()),
                             String.class
             ));
+            articleData.setSort(ArticleSort.getName(bean.getSort()));
+            articleData.setStateStr(ArticleState.getName(bean.getState()));
+            articleData.setCreateTime(simpleDateFormat.format(bean.getCreateTime()));
+            articleData.setUpdateTime(simpleDateFormat.format(bean.getUpdateTime()));
             list.add(articleData);
         });
 

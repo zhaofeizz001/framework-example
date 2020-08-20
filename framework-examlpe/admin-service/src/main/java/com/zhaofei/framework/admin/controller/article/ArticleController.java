@@ -25,8 +25,6 @@ import java.util.List;
 @RequestMapping("/article")
 public class ArticleController extends AbstractController {
 
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
     @DubboReference(retries = 0, cluster = "failfast")
     private ArticleService articleService;
 
@@ -40,9 +38,6 @@ public class ArticleController extends AbstractController {
             try {
                 ArticleListResponseBean articleListResponseBean = new ArticleListResponseBean();
                 BeanUtils.copyProperties(bean, articleListResponseBean);
-                articleListResponseBean.setSort(ArticleSort.getName(bean.getSort()));
-                articleListResponseBean.setStateStr(ArticleState.getName(bean.getState()));
-                articleListResponseBean.setUpdateTime(simpleDateFormat.format(bean.getUpdateTime()));
                 result.add(articleListResponseBean);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -53,8 +48,6 @@ public class ArticleController extends AbstractController {
 
     @PostMapping("/insertArticle")
     public RestResult<ArticleData> insertArticle(@RequestBody @Validated InsertArticleEntityRequestBean entityRequestBean){
-
-
         ArticleData resultBean = null;
         try {
             ArticleData articleEntity = new ArticleData();

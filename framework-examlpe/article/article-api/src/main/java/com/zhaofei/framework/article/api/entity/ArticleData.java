@@ -34,7 +34,7 @@ public class ArticleData extends BaseBean {
     /**
      * 分类：0.文章
      */
-    private Integer sort;
+    private String sort;
     /**
      * 文章标签
      */
@@ -44,6 +44,10 @@ public class ArticleData extends BaseBean {
      */
     private Integer state;
     /**
+     * state
+     */
+    private String stateStr;
+    /**
      * 浏览次数
      */
     private Integer visitsNumber;
@@ -51,11 +55,11 @@ public class ArticleData extends BaseBean {
     /**
      * 创建时间
      */
-    private Date createTime;
+    private String createTime;
     /**
      * 创建时间
      */
-    private Date updateTime;
+    private String updateTime;
 
 
     public Integer getState() {
