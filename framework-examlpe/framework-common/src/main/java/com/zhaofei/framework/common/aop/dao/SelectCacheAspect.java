@@ -1,10 +1,12 @@
 package com.zhaofei.framework.common.aop.dao;
 
 import com.zhaofei.framework.common.aop.util.AopCacheUtils;
+import com.zhaofei.framework.common.base.entity.BaseBean;
 import com.zhaofei.framework.common.base.entity.PageResponseBean;
 import com.zhaofei.framework.common.constant.CommonRedisKey;
 import com.zhaofei.framework.common.utils.JsonUtils;
 import com.zhaofei.framework.common.utils.RedisUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -28,6 +30,7 @@ import static com.zhaofei.framework.common.utils.JsonUtils.jsonToMap;
 /**
  * 查询缓存 当然也可以使用dubbo filter来实现，更为方便
  */
+@Slf4j
 @Aspect
 @Component
 public class SelectCacheAspect {
@@ -56,6 +59,7 @@ public class SelectCacheAspect {
             String redisVal;
             if(o instanceof Collection
                     || o instanceof Map
+                    || o instanceof BaseBean
                     || o instanceof PageResponseBean){
                 redisVal = JsonUtils.objtoJson(o);
             }else {
@@ -99,6 +103,7 @@ public class SelectCacheAspect {
             try {
                 return getObject(redisVal, (Class) genericReturnType);
             } catch (Exception e) {
+                log.error("", e);
                 Class<?> rawType = ((ParameterizedTypeImpl) genericReturnType).getRawType();
                 return getObject(redisVal, rawType);
             }

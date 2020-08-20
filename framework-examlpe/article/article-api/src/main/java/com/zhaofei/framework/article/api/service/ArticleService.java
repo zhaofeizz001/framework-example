@@ -6,6 +6,9 @@ import com.zhaofei.framework.common.base.service.BaseService;
 public interface ArticleService extends BaseService<ArticleData> {
 
 
-    ArticleData insertArticleEntity(ArticleData articleEntity);
+    ArticleData insertArticleEntity(ArticleData articleData);
 
+    void increaseVisitsNumberById(ArticleData articleData);
+
+    ArticleData getArticlesById(ArticleData articleData) throws Exception;
 }

@@ -14,4 +14,8 @@ public interface ArticleDao {
     int insertArticleEntity(ArticleEntity articleEntity);
 
     ArticleEntity selectOneArticleById(ArticleEntity articleEntity);
+
+    int updateById(ArticleEntity articleEntity);
+
+    int updateVisitsNumberById(ArticleEntity articleEntity);
 }

@@ -3,15 +3,19 @@ package com.zhaofei.framework.article.service.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.zhaofei.framework.article.api.entity.ArticleData;
+import com.zhaofei.framework.article.service.dao.ArticleContentDao;
+import com.zhaofei.framework.article.service.entity.ArticleContentEntity;
 import com.zhaofei.framework.article.service.entity.ArticleEntity;
 import com.zhaofei.framework.article.api.service.ArticleService;
 import com.zhaofei.framework.article.service.dao.ArticleDao;
 import com.zhaofei.framework.common.base.entity.PageRequestBean;
 import com.zhaofei.framework.common.base.entity.PageResponseBean;
 import com.zhaofei.framework.common.utils.RedisUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +29,8 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Autowired
     private ArticleDao articleDao;
+    @Autowired
+    private ArticleContentDao articleContentDao;
 
     @Override
     public PageResponseBean<ArticleData> selectList(PageRequestBean<ArticleData> pageRequestBean) {
@@ -47,12 +53,24 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    @Transactional
     public ArticleData insertArticleEntity(ArticleData articleData) {
         ArticleEntity articleEntity = new ArticleEntity();
         BeanUtils.copyProperties(articleData, articleEntity);
+        articleEntity.setLabel(Integer.valueOf(articleData.getLabel()));
+        articleEntity.setContentId(-1);
         int i = articleDao.insertArticleEntity(articleEntity);
         if(i > 0){
-            articleEntity.getId();
+            Integer id = articleEntity.getId();
+            ArticleContentEntity articleContentEntity = new ArticleContentEntity();
+            articleContentEntity.setArticleId(id);
+            articleContentEntity.setContent(articleData.getContent());
+            int insert = articleContentDao.insert(articleContentEntity);
+            if(insert > 0){
+                Integer articleContentId = articleContentEntity.getId();
+                articleEntity.setContentId(articleContentId);
+                articleDao.updateById(articleEntity);
+            }
             ArticleEntity articleEntity1 = articleDao.selectOneArticleById(articleEntity);
             ArticleData articleData1 = new ArticleData();
             BeanUtils.copyProperties(articleEntity1, articleData1);
@@ -64,13 +82,46 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public ArticleData selectOneById(ArticleData articleData) {
+    public ArticleData selectOneById(ArticleData articleData) throws Exception {
         ArticleEntity articleEntity = new ArticleEntity();
         BeanUtils.copyProperties(articleData, articleEntity);
-        ArticleEntity articleEntity1 = articleDao.selectOneArticleById(articleEntity);
-        ArticleData articleData1 = new ArticleData();
-        BeanUtils.copyProperties(articleEntity1, articleData1);
-        return articleData1;
+        ArticleEntity articleBean = articleDao.selectOneArticleById(articleEntity);
+        ArticleData result = new ArticleData();
+        BeanUtils.copyProperties(articleBean, result);
+        result.setLabel(RedisUtils.getMapField(
+                DICT_TYPE.getKey(LABEL_TYPE.getType().toString()),
+                DICT_KEY.getKey(articleBean.getLabel().toString()),
+                String.class
+        ));
+        ArticleContentEntity entity = new ArticleContentEntity();
+        entity.setId(articleBean.getContentId());
+        ArticleContentEntity contentEntity = articleContentDao.selectOneById(entity);
+        if(contentEntity == null && StringUtils.isEmpty(contentEntity.getContent())){
+            throw new Exception();
+        }
+        result.setContent(contentEntity.getContent());
+        return result;
     }
 
+    @Override
+    public int updateById(ArticleData articleData) {
+        ArticleEntity articleEntity = new ArticleEntity();
+        BeanUtils.copyProperties(articleData, articleEntity);
+        return articleDao.updateById(articleEntity);
+    }
+
+    @Override
+    public void increaseVisitsNumberById(ArticleData articleData) {
+        ArticleEntity articleEntity = new ArticleEntity();
+        BeanUtils.copyProperties(articleData, articleEntity);
+        articleDao.updateVisitsNumberById(articleEntity);
+    }
+
+    @Override
+    @Transactional
+    public ArticleData getArticlesById(ArticleData articleData) throws Exception {
+        ArticleData result = this.selectOneById(articleData);
+        this.increaseVisitsNumberById(articleData);
+        return result;
+    }
 }

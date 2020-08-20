@@ -70,11 +70,11 @@ public class ArticleController extends AbstractController {
     }
 
     @PostMapping("/selectArticlesById/{id}")
-    public RestResult<ArticleData> selectOneArticlesById( @PathVariable("id") Integer id
-    ){
-        ArticleData articleEntity = new ArticleData(UserTokenUtils.getUserInfo().getUsername());
-        articleEntity.setId(id);
-        ArticleData resultBean = articleService.selectOneById(articleEntity);
+    public RestResult<ArticleData> selectArticlesById( @PathVariable("id") Integer id
+    ) throws Exception{
+        ArticleData articleData = new ArticleData(UserTokenUtils.getUserInfo().getUsername());
+        articleData.setId(id);
+        ArticleData resultBean = articleService.getArticlesById(articleData);
         System.out.println(JsonUtils.objtoJson(resultBean));
         return this.genSuccessResult(resultBean);
     }

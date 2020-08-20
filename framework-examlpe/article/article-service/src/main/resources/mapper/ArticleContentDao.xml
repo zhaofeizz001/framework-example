@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.zhaofei.framework.article.service.dao.ArticleContentDao">
+    <resultMap id="userResult" type="com.zhaofei.framework.article.service.entity.ArticleContentEntity">
+        <result property="id" column="id" />
+        <result property="articleId" column="article_id" />
+        <result property="content" column="content" />
+    </resultMap>
+
+    <!-- 查询字段 -->
+    <sql id="sql_field">
+         `id`,
+         article_id,
+         content
+    </sql>
+
+
+    <insert id="insert"  useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into `article_content`(
+            `article_id`,
+            `content`
+        )
+        values(
+            #{articleId},
+            #{content}
+        )
+	</insert>
+
+    <select id="selectOneById" resultType="com.zhaofei.framework.article.service.entity.ArticleContentEntity">
+        select
+        <include refid="sql_field" />
+        from article_content
+        <include refid="whereConditions"/>
+    </select>
+
+    <sql id="whereConditions">
+        <where>
+            <if test="id != null">
+                and `id`= #{id}
+            </if>
+            <if test="articleId != null">
+                and `article_id`= #{articleId}
+            </if>
+            <if test="content != null and '' != content">
+                and `content`= #{content}
+            </if>
+        </where>
+    </sql>
+</mapper>

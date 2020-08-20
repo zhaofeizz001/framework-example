@@ -34,7 +34,6 @@
         from article
     </select>
 
-
     <insert id="insertArticleEntity"  useGeneratedKeys="true" keyProperty="id" keyColumn="id">
         insert into `article`(
             `title`,
@@ -64,6 +63,29 @@
         from article
         <include refid="whereConditions"/>
     </select>
+
+    <update id="updateById">
+        update `article`
+        <set>
+            <if test = "null != id">`id`= #{id},</if>
+            <if test = "null != title and '' != title">`title`= #{title},</if>
+            <if test = "null != contentId">`content_id`= #{contentId},</if>
+            <if test = "null != sort">`sort`= #{sort},</if>
+            <if test = "null != label">`label`= #{label},</if>
+            <if test = "null != state">`state`= #{state},</if>
+            <if test = "null != visitsNumber">`visits_number`= #{visitsNumber},</if>
+            <if test = "null != createTime">`create_time`= #{createTime},</if>
+            <if test = "null != updateTime">`update_time`= #{updateTime},</if>
+        </set>
+        where `id` = #{id}
+    </update>
+
+    <update id="updateVisitsNumberById">
+        update `article`
+        set `visits_number` = `visits_number` + 1
+        where `id` = #{id}
+    </update>
+
 
     <sql id="whereConditions">
         <where>

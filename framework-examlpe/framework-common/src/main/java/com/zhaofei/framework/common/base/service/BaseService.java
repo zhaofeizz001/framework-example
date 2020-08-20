@@ -7,5 +7,7 @@ public interface BaseService<T> {
 
     PageResponseBean<T> selectList(PageRequestBean<T> t);
 
-    T selectOneById(T t);
+    T selectOneById(T t) throws Exception;
+
+    int updateById(T t);
 }

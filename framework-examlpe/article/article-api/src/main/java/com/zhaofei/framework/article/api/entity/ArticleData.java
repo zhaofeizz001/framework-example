@@ -28,9 +28,9 @@ public class ArticleData extends BaseBean {
      */
     private String title;
     /**
-     * 内容id
+     * 内容
      */
-    private Integer contentId;
+    private String content;
     /**
      * 分类：0.文章
      */
