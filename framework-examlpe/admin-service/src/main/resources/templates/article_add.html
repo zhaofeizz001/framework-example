@@ -60,7 +60,7 @@
 		</div>
 		<div class="row cl">
 			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
-				<button onClick="article_save_submit();" class="btn btn-primary radius" type="submit"><i class="Hui-iconfont">&#xe632;</i> 保存并提交审核</button>
+				<button onClick="article_save_submit();" class="btn btn-primary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 保存并提交审核</button>
 				<button onClick="article_save();" class="btn btn-secondary radius" type="button"><i class="Hui-iconfont">&#xe632;</i> 保存草稿</button>
 				<button onClick="removeIframe();" class="btn btn-default radius" type="button">&nbsp;&nbsp;取消&nbsp;&nbsp;</button>
 			</div>
@@ -263,9 +263,6 @@ function getDict(){
 				var key = index.replace("Key_", "");
 				html += '<option value=' + key + '>' + value + '</option>'
 			});
-
-
-
 			$("#label").html(html)
 		},
 	});
@@ -289,12 +286,19 @@ function article_save_submit(){
 			"token": getCookie("token")
 		},
 		success:function(data){
-			layer.alert(data.header.retMsg)
+			layer.confirm(data.header.retMsg, {
+				btn: ['确定'] //按钮
+			}, function(){
+				tee();
+				layer_close();
+			});
+
 		},
 	});
+}
 
-	getList();
-	removeIframe();
+function tee(){
+	window.parent.window.location.reload();
 }
 
 function getCookie(objName) {//获取指定名称的cookie的值

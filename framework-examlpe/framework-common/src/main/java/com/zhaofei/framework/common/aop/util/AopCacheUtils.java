@@ -1,6 +1,8 @@
 package com.zhaofei.framework.common.aop.util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.zhaofei.framework.common.base.entity.PageRequestBean;
+import com.zhaofei.framework.common.base.entity.PageResponseBean;
 import com.zhaofei.framework.common.constant.CommonRedisKey;
 import com.zhaofei.framework.common.utils.JsonUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +16,7 @@ import java.util.Map;
 public class AopCacheUtils {
 
     private static final String REDIS_KEY = "%s-%s";
+    private static final String REDIS_PAGE_KEY = "%s-%s-%s";
 
     public static MethodSignature getMethodSignature(ProceedingJoinPoint pjp){
         Signature sig = pjp.getSignature();
@@ -56,6 +59,10 @@ public class AopCacheUtils {
         redisKey += redisKeyCache.substring(redisKeyCache.indexOf("("));
         if(StringUtils.isNotEmpty(id) && !"null".equals(id)){
             return String.format(REDIS_KEY, redisKey, id);
+        } else if(arg instanceof PageRequestBean){
+            PageRequestBean pageRequestBean = (PageRequestBean) arg;
+            return String.format(REDIS_PAGE_KEY, redisKey, pageRequestBean.getPageSize(), pageRequestBean.getPageNum());
+
         }
         return redisKey;
     }

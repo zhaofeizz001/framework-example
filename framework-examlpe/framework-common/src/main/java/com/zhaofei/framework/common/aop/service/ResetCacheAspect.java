@@ -27,32 +27,19 @@ public class ResetCacheAspect {
 
     private static final String REDIS_KEY = "%s-%s";
 
-
-//    @Pointcut("execution(public * com.zhaofei.framework.*.service.service.impl..*.insert*(..))")
-//    public void insertMethod() {
-//    }
-//
     @Pointcut("execution(public * com.zhaofei.framework.*.service.service.impl..*.insert*(..))" +
-            " || execution(public * com.zhaofei.framework.*.service.service.impl..*.update*(..))")
+            " || execution(public * com.zhaofei.framework.*.service.service.impl..*.update*(..))" +
+            " || execution(public * com.zhaofei.framework.*.service.service.impl..*.delete*(..))")
     public void exMethod() {
-    }
-
-    @Pointcut("execution(public * com.zhaofei.framework.*.service.service.impl..*.delete*(..))")
-    public void deleteMethod() {
     }
 
 
     @Around("exMethod()")
     public Object exMethod(ProceedingJoinPoint pjp) throws Throwable {
-        return removeRedisCache(pjp, false);
+        return removeRedisCache(pjp);
     }
 
-    @Around("deleteMethod()")
-    public Object deleteMethod(ProceedingJoinPoint pjp) throws Throwable {
-        return removeRedisCache(pjp, true);
-    }
-
-    private Object removeRedisCache(ProceedingJoinPoint pjp, boolean isDelete) throws Throwable {
+    private Object removeRedisCache(ProceedingJoinPoint pjp) throws Throwable {
         String redisKey = AopCacheUtils.getRedisCacheKey(pjp);
         int index = redisKey.lastIndexOf(":");
         String redisCacheKey = redisKey.substring(0, index);
@@ -65,18 +52,15 @@ public class ResetCacheAspect {
         });
         Object id = stringObjectMap.get("id");
         String redisSaveKey = String.format(REDIS_KEY, redisCacheKey, id);
-        if(isDelete){
-            RedisUtils.remove(redisSaveKey);
-        } else {
-            RedisUtils.set(redisSaveKey, json, CommonRedisKey.getCommonMethodCacheByDesc(redisCacheKey).getExpTime());
-        }
+        RedisUtils.remove(redisSaveKey);
+//        RedisUtils.set(redisSaveKey, json, CommonRedisKey.getCommonMethodCacheByDesc(redisCacheKey).getExpTime());
 
         cleanPageListCache(redisKey.substring(0, index));
 
         return proceed;
     }
 
-    private void cleanPageListCache(String redisKey){
+    private void cleanPageListCache(String redisKey) {
         Set<String> keys = RedisUtils.keys(String.format(SELECT_LIST_KEY, redisKey, "*"));
         keys.forEach(key -> {
             RedisUtils.remove(key);

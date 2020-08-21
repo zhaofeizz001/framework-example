@@ -20,11 +20,15 @@ public class ArticleController extends AbstractController {
     @DubboReference(retries = 0, cluster = "failfast")
     private ArticleService articleService;
 
-    @PostMapping("/getList")
-    public RestResult<PageResponseBean> getArticleList(){
+    @PostMapping("/getList/{size}/{index}")
+    public RestResult<PageResponseBean> getArticleList(
+            @PathVariable("size") Integer size,
+            @PathVariable("index") Integer index){
         ArticleData articleEntity = new ArticleData(UserTokenUtils.getUserInfo().getUsername());
-        PageResponseBean<ArticleData> pageResponseBean =
-                articleService.selectList(new PageRequestBean<>(articleEntity));
+        PageRequestBean<ArticleData> requestBean = new PageRequestBean<>(articleEntity);
+        requestBean.setPageNum(index);
+        requestBean.setPageSize(size);
+        PageResponseBean<ArticleData> pageResponseBean = articleService.selectList(requestBean);
         return this.genSuccessResult(pageResponseBean);
     }
 
