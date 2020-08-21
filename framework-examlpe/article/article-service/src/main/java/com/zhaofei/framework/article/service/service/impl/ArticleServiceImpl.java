@@ -67,6 +67,7 @@ public class ArticleServiceImpl implements ArticleService {
         ArticleEntity articleEntity = new ArticleEntity();
         BeanUtils.copyProperties(articleData, articleEntity);
         articleEntity.setLabel(Integer.valueOf(articleData.getLabel()));
+        articleEntity.setSort(Integer.valueOf(articleData.getSort()));
         articleEntity.setContentId(-1);
         int i = articleDao.insertArticleEntity(articleEntity);
         if(i > 0){

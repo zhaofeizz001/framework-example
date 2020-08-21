@@ -34,6 +34,7 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addViewController("/view/welcome").setViewName("welcome");
         registry.addViewController("/view/login").setViewName("login");
         registry.addViewController("/view/article_list").setViewName("article_list");
+        registry.addViewController("/view/article_add").setViewName("article_add");
     }
 
     private static final String LOGIN_VIEW = "/view/login";
