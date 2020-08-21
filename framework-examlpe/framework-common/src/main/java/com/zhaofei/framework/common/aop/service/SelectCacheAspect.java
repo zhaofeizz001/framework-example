@@ -103,7 +103,6 @@ public class SelectCacheAspect {
             try {
                 return getObject(redisVal, (Class) genericReturnType);
             } catch (Exception e) {
-                log.error("", e);
                 Class<?> rawType = ((ParameterizedTypeImpl) genericReturnType).getRawType();
                 return getObject(redisVal, rawType);
             }
